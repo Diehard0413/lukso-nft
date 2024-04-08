@@ -1,9 +1,10 @@
 
-pragma solidity 0.8.4;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
+
 import "./DataTypes.sol";
 
-interface IXY3 {
-    
+interface ILENDZ {
     event LoanStarted(
         uint32 indexed loanId,
         address indexed borrower,
@@ -11,7 +12,6 @@ interface IXY3 {
         uint256 nonce,
         LoanDetail loanDetail
     );
-
     
     event LoanRepaid(
         uint32 indexed loanId,
@@ -24,13 +24,10 @@ interface IXY3 {
         address nftAsset,
         address borrowAsset
     );
-
     
     event NonceCancelled(address lender, uint256 nonce);
-
     
     event TimeStampCancelled(address lender, uint256 timestamp);
-
     
     event LoanLiquidated(
         uint32 indexed loanId,
@@ -42,7 +39,6 @@ interface IXY3 {
         uint256 loanLiquidationDate,
         address nftAsset
     );
-
     
     function loanDetails(uint32)
         external
@@ -59,7 +55,6 @@ interface IXY3 {
             address,
             bool
         );
-
     
     function borrow(
         Offer memory _offer,
@@ -68,32 +63,24 @@ interface IXY3 {
         Signature memory _lenderSignature,
         Signature memory _brokerSignature
     ) external;
-
     
     function cancelByNonce(uint256 _nonce) external;
-
     
     function cancelByTimestamp(uint256 _timestamp) external;
-
     
     function getNonceUsed(address _user, uint256 _nonce)
         external
         view
         returns (bool);
-
     
     function getTimestampCancelled(address _user)
         external
         view
         returns (uint256);
-
     
     function repay(uint32 _loanId) external;
-
     
     function liquidate(uint32 _loanId) external;
-
     
     function getRepayAmount(uint32 _loanId) external returns (uint256);
-
 }

@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: Unlicensed
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
-pragma solidity 0.8.4;
 pragma abicoder v2;
 
 interface IDelegate {
@@ -10,6 +10,7 @@ interface IDelegate {
         address token,
         uint256 amount
     ) external;
+    
     function erc721Transfer(
         address sender,
         address receiver,

@@ -1,12 +1,9 @@
-
-
-pragma solidity 0.8.4;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
 import "./ILoanStatus.sol";
 
-
 contract LoanStatus is ILoanStatus {
-
     event UpdateStatus(
         uint32 indexed loanId,
         address indexed lender,
@@ -31,7 +28,6 @@ contract LoanStatus is ILoanStatus {
 
         return totalNumLoans;
     }
-
     
     function resolveLoan(uint32 _loanId) internal {
         LoanState storage loan = loanStatus[_loanId];
@@ -41,7 +37,6 @@ contract LoanStatus is ILoanStatus {
 
         emit UpdateStatus(_loanId, loan.lender, StatusType.RESOLVED);
     }
-
     
     function getLoanState(uint32 _loanId)
         public

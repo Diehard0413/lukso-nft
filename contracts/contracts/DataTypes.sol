@@ -1,9 +1,6 @@
 
-
-pragma solidity 0.8.4;
-
-
-
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
 struct Signature {
     uint256 nonce;
@@ -11,7 +8,6 @@ struct Signature {
     address signer;
     bytes signature;
 }
-
 
 struct LoanDetail {
     uint256 borrowAmount;
@@ -25,7 +21,6 @@ struct LoanDetail {
     address borrower;
     bool isCollection;
 }
-
 
 struct Offer {
     uint256 borrowAmount;

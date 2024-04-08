@@ -1,20 +1,16 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
+import {Offer, Signature} from "./DataTypes.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
-pragma solidity 0.8.4;
-
-import {Offer, Signature} from "../DataTypes.sol";
-import "../../@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
-
-
-library SigningUtils {
-    
+library SigningUtils {    
     function getChainID() internal view returns (uint256 id) {
         assembly {
             id := chainid()
         }
-    }
-
-    
+    }    
 
     function offerSignatureIsValid(
         Offer memory _offer,
@@ -28,15 +24,12 @@ library SigningUtils {
             bytes32 message = keccak256(
                 abi.encodePacked(getEncodedOffer(_offer), _nftId, getEncodedSignature(_signature), address(this), getChainID())
             );
+            (address recovered, ECDSA.RecoverError error,) = ECDSA.tryRecover(message, _signature.signature);
             return
-                SignatureChecker.isValidSignatureNow(
-                    _signature.signer,
-                    ECDSA.toEthSignedMessageHash(message),
-                    _signature.signature
-                );
+                (error == ECDSA.RecoverError.NoError && recovered == _signature.signer) ||
+                SignatureChecker.isValidERC1271SignatureNow(_signature.signer, message, _signature.signature);
         }
     }
-
     
     function offerSignatureIsValid(
         Offer memory _offer,
@@ -50,15 +43,12 @@ library SigningUtils {
                 abi.encodePacked(getEncodedOffer(_offer), getEncodedSignature(_signature), address(this), getChainID())
             );
 
+            (address recovered, ECDSA.RecoverError error,) = ECDSA.tryRecover(message, _signature.signature);
             return
-                SignatureChecker.isValidSignatureNow(
-                    _signature.signer,
-                    ECDSA.toEthSignedMessageHash(message),
-                    _signature.signature
-                );
+                (error == ECDSA.RecoverError.NoError && recovered == _signature.signer) ||
+                SignatureChecker.isValidERC1271SignatureNow(_signature.signer, message, _signature.signature);
         }
     }
-
     
     function getEncodedOffer(Offer memory _offer) internal pure returns (bytes memory data) {
             data = 
@@ -73,7 +63,6 @@ library SigningUtils {
                 );
     }
 
-    
     function getEncodedSignature(Signature memory _signature) internal pure returns (bytes memory) {
         return abi.encodePacked(_signature.signer, _signature.nonce, _signature.expiry);
     }

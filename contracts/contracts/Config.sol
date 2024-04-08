@@ -1,13 +1,11 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
-
-pragma solidity 0.8.4;
-
-import "../@openzeppelin/contracts/security/Pausable.sol";
-import "../@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "../@openzeppelin/contracts/access/AccessControl.sol";
-import "../@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import "./IConfig.sol";
-
 
 abstract contract Config is
     AccessControl,
@@ -17,44 +15,32 @@ abstract contract Config is
 {
     
     bytes32 public constant MANAGER_ROLE = keccak256("MANAGER");
-
     
     bytes32 public constant SIGNER_ROLE = keccak256("SIGNER");
-
     
     address public adminFeeReceiver;
-
     
     uint256 public override maxBorrowDuration = 365 days;
     uint256 public override minBorrowDuration = 1 days;
-
     
     uint16 public override adminShare = 25;
     uint16 public constant HUNDRED_PERCENT = 10000;
-
     
-    mapping(address => bool) private lsp7Permits;
-
-    
+    mapping(address => bool) private lsp7Permits; 
     mapping(address => bool) private lsp8Permits;
-
-
     
     constructor(address admin) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         adminFeeReceiver = admin;
     }
-
     
     function pause() external onlyRole(MANAGER_ROLE) {
         _pause();
     }
-
     
     function unpause() external onlyRole(MANAGER_ROLE) {
         _unpause();
     }
-
     
     function updateMaxBorrowDuration(uint256 _newMaxBorrowDuration)
         external
@@ -70,7 +56,6 @@ abstract contract Config is
             emit MaxBorrowDurationUpdated(_newMaxBorrowDuration);
         }
     }
-
     
     function updateMinBorrowDuration(uint256 _newMinBorrowDuration)
         external
@@ -86,7 +71,6 @@ abstract contract Config is
             emit MinBorrowDurationUpdated(_newMinBorrowDuration);
         }
     }
-
     
     function updateAdminShare(uint16 _newAdminShare)
         external
@@ -102,7 +86,6 @@ abstract contract Config is
             emit AdminFeeUpdated(_newAdminShare);
         }
     }
-
     
     function updateAdminFeeReceiver(address _newAdminFeeReceiver)
         external
@@ -115,7 +98,6 @@ abstract contract Config is
             emit AdminFeeReceiverUpdated(adminFeeReceiver);
         }
     }
-
     
     function setLSP7Permits(address[] memory _lsp7s, bool[] memory _permits)
         external
@@ -131,7 +113,6 @@ abstract contract Config is
             _setLSP7Permit(_lsp7s[i], _permits[i]);
         }
     }
-
     
     function setLSP8Permits(address[] memory _lsp8s, bool[] memory _permits)
         external
@@ -147,7 +128,6 @@ abstract contract Config is
             _setLSP8Permit(_lsp8s[i], _permits[i]);
         }
     }
-
     
     function getLSP7Permit(address _lsp7)
         public
@@ -156,9 +136,7 @@ abstract contract Config is
         returns (bool)
     {
         return lsp7Permits[_lsp7];
-    }
-
-    
+    } 
     
     function getLSP8Permit(address _lsp8)
         public
@@ -176,7 +154,6 @@ abstract contract Config is
 
         emit LSP7Permit(_lsp7, _permit);
     }
-
     
     function _setLSP8Permit(address _lsp8, bool _permit) internal {
         require(_lsp8 != address(0), "lsp8 is zero address");

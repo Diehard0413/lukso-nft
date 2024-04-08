@@ -1,6 +1,5 @@
-// SPDX-License-Identifier: Apache-2.0
-
-pragma solidity ^0.8.4;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
 
 /**
  * @title Interface of the LSP7 - Digital Asset standard, a fungible digital asset.

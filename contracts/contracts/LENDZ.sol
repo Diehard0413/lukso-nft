@@ -1,42 +1,31 @@
 // SPDX-License-Identifier: MIT
-
-pragma solidity 0.8.4;
+pragma solidity 0.8.19;
 
 import "./ILENDZ.sol";
-import "./DataTypes.sol";
 import "./LoanStatus.sol";
 import "./Config.sol";
-import "./utils/SigningUtils.sol";
+import "./DataTypes.sol";
+import "./SigningUtils.sol";
 
 import "./ILSP8IdentifiableDigitalAsset.sol";
 import "./ILSP7DigitalAsset.sol";
 
-
 contract LENDZ is ILENDZ, Config, LoanStatus {
-
     mapping(uint32 => LoanDetail) public override loanDetails;
-
     
     mapping(address => mapping(uint256 => bool)) internal _invalidNonce;
-
     
     mapping(address => uint256) internal _offerCancelTimestamp;
-
     
     modifier loanIsOpen(uint32 _loanId) {
         require(getLoanState(_loanId).status == StatusType.NEW, "Loan is not open");
         _;
-    }
-
-    
+    }    
     
     constructor(
         address _admin
     ) Config(_admin) LoanStatus() {
     }
-
-    
-
     
     function borrow(
         Offer memory _offer,
@@ -55,7 +44,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
             _brokerSignature
         );
     }
-
     
     function repay(uint32 _loanId) external override nonReentrant loanIsOpen(_loanId) {
         (
@@ -85,7 +73,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
 
         _resolveLoan(_loanId, borrower, loan);
     }
-
     
     function liquidate(uint32 _loanId) external override nonReentrant loanIsOpen(_loanId) {
         (
@@ -114,14 +101,12 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         _resolveLoan(_loanId, lender, loan);
 
     }
-
     
     function cancelByNonce(uint256 _nonce) override external {
         require(!_invalidNonce[msg.sender][_nonce], "Invalid nonce");
         _invalidNonce[msg.sender][_nonce] = true;
         emit NonceCancelled(msg.sender, _nonce);
     }
-
     
     function cancelByTimestamp(uint256 _timestamp) override external {
         require(_timestamp < block.timestamp, "Invalid timestamp");
@@ -130,25 +115,20 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
             emit TimeStampCancelled(msg.sender, _timestamp);
         }
     }
-
     
     function getRepayAmount(uint32 _loanId) external view override returns (uint256) {
         LoanDetail storage loan = loanDetails[_loanId];
         return loan.repayAmount;
     }
-
     
     function getNonceUsed(address _user, uint256 _nonce) external view override returns (bool) {
         return _invalidNonce[_user][_nonce];
     }
-
     
     function getTimestampCancelled(address _user) external override view returns (uint256) {
         return _offerCancelTimestamp[_user];
     }
-    
 
-    
     function _resolveLoan(
         uint32 _loanId,
         address _nftReceiver,
@@ -160,7 +140,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         delete loanDetails[_loanId];
     }
 
-    
     function _loanSanityChecks(Offer memory _offer) internal view {
         require(getLSP7Permit(_offer.borrowAsset), "Invalid currency");
         require(getLSP8Permit(_offer.nftAsset), "Invalid LSP8 token");
@@ -191,7 +170,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         borrower = loan.borrower;
     }
 
-    
     function _payoffAndFee(LoanDetail memory _loanDetail)
         internal
         pure
@@ -202,7 +180,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         payoffAmount = _loanDetail.repayAmount - adminFee;
     }
 
-    
     function _borrow(
         LoanDetail memory _loanDetail,
         Offer memory _offer,
@@ -233,7 +210,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         emit LoanStarted(loanId, msg.sender, _lenderSignature.signer, _lenderSignature.nonce, _loanDetail);
     }
 
-    
     function _checkSignatures(Offer memory _offer,bytes32 _nftId, bool _isCollection, Signature memory _lenderSignature, Signature memory _brokerSignature) private view {
         if (_isCollection) {
             require(SigningUtils.offerSignatureIsValid(_offer, _lenderSignature), "Lender signature is invalid");
@@ -243,7 +219,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         require(SigningUtils.offerSignatureIsValid(_offer, _nftId, _brokerSignature), "Signer signature is invalid");
     }
 
-    
     function _createLoanDetail(Offer memory _offer, bytes32 _nftId, bool _isCollection) internal view returns (LoanDetail memory) {
         return
             LoanDetail({
@@ -260,7 +235,6 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
             });
     }
 
-    
     function _loanMaturityDate(LoanDetail memory loan) private pure returns (uint256) {
         return uint256(loan.loanStart) + uint256(loan.loanDuration);
     }
