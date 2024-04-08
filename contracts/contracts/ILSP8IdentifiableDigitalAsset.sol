@@ -2,7 +2,7 @@
 pragma solidity 0.8.19;
 
 // interfaces
-import {IERC165} from "../@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /**
  * @title Interface of the LSP8 - Identifiable Digital Asset standard, a non-fungible digital asset.
