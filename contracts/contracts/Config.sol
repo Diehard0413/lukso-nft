@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -28,14 +28,6 @@ abstract contract Config is
     constructor(address admin) {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         adminFeeReceiver = admin;
-    }
-    
-    function pause() external onlyRole(MANAGER_ROLE) {
-        _pause();
-    }
-    
-    function unpause() external onlyRole(MANAGER_ROLE) {
-        _unpause();
     }
     
     function updateMaxBorrowDuration(uint256 _newMaxBorrowDuration)

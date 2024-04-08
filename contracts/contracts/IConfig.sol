@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 interface IConfig {
     event AdminFeeUpdated(uint16 newAdminFee);

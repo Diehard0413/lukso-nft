@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import "./ILENDZ.sol";
 import "./LoanStatus.sol";
@@ -33,7 +33,7 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         bool _isCollectionOffer,
         Signature memory _lenderSignature,
         Signature memory _brokerSignature
-    ) external override whenNotPaused nonReentrant {
+    ) external override {
         _loanSanityChecks(_offer);
         _borrow(
             _createLoanDetail(_offer, _nftId, _isCollectionOffer),
@@ -45,7 +45,7 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         );
     }
     
-    function repay(uint32 _loanId) external override nonReentrant loanIsOpen(_loanId) {
+    function repay(uint32 _loanId) external override loanIsOpen(_loanId) {
         (
             address borrower,
             address lender,
@@ -74,7 +74,7 @@ contract LENDZ is ILENDZ, Config, LoanStatus {
         _resolveLoan(_loanId, borrower, loan);
     }
     
-    function liquidate(uint32 _loanId) external override nonReentrant loanIsOpen(_loanId) {
+    function liquidate(uint32 _loanId) external override loanIsOpen(_loanId) {
         (
             address borrower,
             address lender,
